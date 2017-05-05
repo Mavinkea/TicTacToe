@@ -44,33 +44,40 @@ def connect(clientSock):
 			#Add a new player
 			if not found:
 				lock.acquire()
-				currPlayer = Player(username,clientSock,"available")
+				currPlayer = Player(username,clientSock)
 				playerList.append(currPlayer)
 				print currPlayer.username+ " created an account and logged in"
 				lock.release()
 
 			clientSock.send("Welcome: "+currPlayer.username)
 
+		elif req[0]=='play':
+			opponent=None
+			for opp in playerList:
+				if opp.username!=currPlayer.username and opp.state=="available":
+					opponent=opp
+					clientSock.send("Found game with: "+opponent.username)
+
 		#Help functionality
 		elif cmd=='help':
-			clientSock.send("The different commands are: "
+			clientSock.send("Commands: "
 				+"\nlogin-create an account or log into an existing one"
-				+"\nmove n-move to position n, where n is between 1 and 9"
+				+"\nplace n-move to position n, where n is between 1 and 9"
 				+"\nexit-leave the server")
 
 		elif cmd=='place':
 			game=TTTGame(1,2,3)
-			print game.drawBoard()
+			clientSock.send(game.drawBoard())
 
 		#Exit functionality	
 		elif cmd=='exit':
-			print 'Client disconnected'
+			print'Client disconnected'
 			clientSock.send("DISCONN")
 			clientSock.close()
 			break
 
 		else: 
-			clientSock.send("400 ER")
+			clientSock.send("400 ERR")
 
 while True:
 	clientSock, addr=socket.accept()

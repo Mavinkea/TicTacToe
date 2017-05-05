@@ -23,7 +23,7 @@ while True:
 		socket.send(userInput)
 		response=socket.recv(4096)
 
-		if response=="400 ER":
+		if response=="400 ERR":
 			print "Invalid command"
 
 		if response=="DISCONN":

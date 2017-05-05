@@ -3,6 +3,7 @@ import sys
 from thread import *
 from threading import RLock
 from player import Player
+from tttgame import TTTGame
 
 try:
 	socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -57,9 +58,9 @@ def connect(clientSock):
 				+"\nmove n-move to position n, where n is between 1 and 9"
 				+"\nexit-leave the server")
 
-		elif cmd=='move':
-
-		elif cmd='observe':	
+		elif cmd=='place':
+			game=TTTGame(1,2,3)
+			print game.drawBoard()
 
 		#Exit functionality	
 		elif cmd=='exit':

@@ -1,9 +1,11 @@
 import socket
 import sys
+import Queue
 from thread import *
 from threading import RLock
 from player import Player
 from tttgame import TTTGame
+import time
 
 try:
 	socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -19,7 +21,7 @@ except socket.error:
 socket.listen(2)
 print 'Listening'
 
-playerList=[]
+players=[]
 gameList=[]
 lock=RLock()
 
@@ -35,7 +37,7 @@ def connect(clientSock):
 			username=req[1]
 			found = False
 			#Check if username exists already
-			for p in playerList:
+			for p in players:
 				if p.username==username:
 					currPlayer=p
 					found=True
@@ -45,18 +47,28 @@ def connect(clientSock):
 			if not found:
 				lock.acquire()
 				currPlayer = Player(username,clientSock)
-				playerList.append(currPlayer)
+				players.append(currPlayer)
 				print currPlayer.username+ " created an account and logged in"
 				lock.release()
 
 			clientSock.send("Welcome: "+currPlayer.username)
 
 		elif req[0]=='play':
+			#Make player wait to find an opponent if none is available
+			currPlayer.setAvailable()
 			opponent=None
-			for opp in playerList:
-				if opp.username!=currPlayer.username and opp.state=="available":
-					opponent=opp
-					clientSock.send("Found game with: "+opponent.username)
+			while opponent is None:
+				for opp in players:
+					if opp.username!=currPlayer.username and opp.state=="available":
+						opponent=opp
+
+				#Use sleep function to wait until opponent is found
+				if opponent is None:
+					time.sleep(1)
+				#Send message to current player and opponent that they are connected with eachother
+				else:
+					currPlayer.conn.send("WAIT Starting game with: "+opponent.username)
+					opponent.conn.send("WAIT tarting game with: "+currPlayer.username)
 
 		#Help functionality
 		elif cmd=='help':

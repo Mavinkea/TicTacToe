@@ -6,30 +6,33 @@ try:
 except socket.error:
 	print("Could not create socket")
 
-script,host,port = sys.argv
-port=int(port)
+script,host = sys.argv
 
-socket.connect((host, port))
+socket.connect((host, 6869))
 response="WAIT"
 
 while True:
 
-	while response != 'DISCONN':
-		userInput=raw_input("ttt->")
-
-		if(userInput==''):
-			continue
-
-		socket.send(userInput)
+	while "WAIT" in response:
 		response=socket.recv(4096)
+		print response
 
-		if response=="400 ERR":
-			print "Invalid command"
+	userInput=raw_input("ttt->")
+	if(userInput==''):
+		continue
+
+	socket.send(userInput)
+	response=socket.recv(4096)
+
+	if response=="400 ERR":
+		print "Invalid command"
+
+	else:
+		print response
 
 		if response=="DISCONN":
 			sys.exit()
 
-		print response
 
 
 socket.close()

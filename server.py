@@ -15,7 +15,7 @@ except socket.error:
 try:
     socket.bind(('', 6869))
 except socket.error:
-    print 'Failed'
+    print ('Failed')
     sys.exit()
 
 socket.listen(2)
@@ -26,6 +26,8 @@ gameList=[]
 lock=RLock()
 
 def connect(clientSock):
+
+	clientSock.send("Welcome to Tic Tac Toe")
 
 	while True:
 
@@ -53,7 +55,7 @@ def connect(clientSock):
 
 			clientSock.send("Welcome: "+currPlayer.username)
 
-		elif req[0]=='play':
+		elif req[0]=='play' and currPlayer:
 			#Make player wait to find an opponent if none is available
 			currPlayer.setAvailable()
 			opponent=None
@@ -67,8 +69,13 @@ def connect(clientSock):
 					time.sleep(1)
 				#Send message to current player and opponent that they are connected with eachother
 				else:
-					currPlayer.conn.send("WAIT Starting game with: "+opponent.username)
-					opponent.conn.send("WAIT tarting game with: "+currPlayer.username)
+					lock.acquire()
+					game=TTTGame(opponent, currPlayer, 1)
+					currPlayer.setBusy()
+					opponent.setBusy()
+					gameList.append(game.gameID)
+					lock.release()
+					startGame(game)
 
 		#Help functionality
 		elif cmd=='help':
@@ -90,6 +97,46 @@ def connect(clientSock):
 
 		else: 
 			clientSock.send("400 ERR")
+
+def startGame(game):
+
+	gameover=False
+
+	while not gameover:
+		game.turn.send("Your turn")
+		game.waiting.send("WAIT Other players turn")
+		move=game.turn.conn.recv(4096)
+		if checkMove(game,move):
+			response=game.makeMove(move.split(" ")[1])
+
+			if response=="301 NPT":
+				game.turn.send("WAIT"+game.drawBoard())
+				game.changeTurn()
+
+			elif response=="300 FIN":
+				gameover=True
+				game.turn.send("Game over. You won!")
+				game.waiting.send("Game over. "+game.turn.username+" won!")
+				print "Game over"
+		else:
+			game.turn.send("Invalid move")
+
+	return
+
+def checkMove(game, move):
+		statement, pos=move.split(" ")
+		try:
+			pos=int(pos)
+		except ValueError:
+			return False
+
+		if statement !="place":
+			return False
+		elif pos<0 or pos>8 or game.board[pos]=='X' or game.board[pos]=='O':
+			return False
+
+		else:
+			return True
 
 while True:
 	clientSock, addr=socket.accept()

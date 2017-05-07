@@ -35,6 +35,7 @@ class TTTGame:
 			self.board[move]='O'
 
 		done=True
+		winner=False
 		#Check if there are still moves to be made
 		for i in self.board:
 			if i!='X' or i!='O':
@@ -44,11 +45,14 @@ class TTTGame:
 		#If winning combination is found, the game is over
 		for a,b,c in self.WIN_COMBINATIONS:
 			if self.board[a]==self.board[b]==self.board[c]:
-				done=True
+				winner=True
+
+		if winner:
+			return "300 WIN"
 
 		#Endgame
 		#300 FIN- Game Finished
-		if done:
+		elif done:
 			return "300 FIN"
 		#If not endgame, indicate to server that the game loop must continue running
 		#301 NPT- Next Player Turn

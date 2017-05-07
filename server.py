@@ -6,6 +6,7 @@ from threading import RLock
 from player import Player
 from tttgame import TTTGame
 import time
+import uuid
 
 try:
 	socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -18,7 +19,7 @@ except socket.error:
     print ('Failed')
     sys.exit()
 
-socket.listen(2)
+socket.listen(5)
 print 'Listening'
 
 players=[]
@@ -70,18 +71,31 @@ def connect(clientSock):
 				#Send message to current player and opponent that they are connected with eachother
 				else:
 					lock.acquire()
-					game=TTTGame(opponent, currPlayer, 1)
+					id=uuid.uuid4()
+					game=TTTGame(opponent, currPlayer, id)
+					gameList.append(id)
+					print "New Game with id: "+str(id)
+					gameList.append(game.gameID)
 					currPlayer.setBusy()
 					opponent.setBusy()
-					gameList.append(game.gameID)
 					lock.release()
+
 					startGame(game)
+
+					lock.acquire()
+					gameList.remove(id)
+					currPlayer.setAvailable()
+					opponent.setAvailable()
+					lock.release()
+
 
 		#Help functionality
 		elif cmd=='help':
 			clientSock.send("Commands: "
 				+"\nlogin-create an account or log into an existing one"
-				+"\nplace n-move to position n, where n is between 1 and 9"
+				+"\nplay-finds and starts a game, or waits until a game is found"
+				+"\nplace n-move to position n, where n is between 0 and 8"
+				+"\ngames-show all games currently going on"
 				+"\nexit-leave the server")
 
 		#Exit functionality	
@@ -91,6 +105,14 @@ def connect(clientSock):
 			clientSock.close()
 			break
 
+		elif cmd=="games":
+			if len(gameList)>0:
+				listOfGames=""
+				for g in gameList:
+					listOfGames+=str(g)
+				clientSock.send(listOfGames)
+			else:
+				clientSock.send("No games currently")
 		else: 
 			clientSock.send("400 ERR")
 

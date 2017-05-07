@@ -41,7 +41,7 @@ while True:
 		print response
 
 		#Exit loop and quit program if user chooses to exit
-		if response=="DISCONN":
+		if response=="DISC":
 			sys.exit()
 
 socket.close()

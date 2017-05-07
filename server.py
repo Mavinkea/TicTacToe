@@ -129,12 +129,13 @@ def connect(clientSock):
 				+"\nplay-Finds and starts a game, or waits until a game is found. Must be logged in to play"
 				+"\nplace n-Move to position n, where n is between 0 and 8. Must be logged in and in a game to use this command."
 				+"\ngames-Show all games currently going on."
+				+"\nwho- Show all players currently logged in or playing a game"
 				+"\nexit-Leave the server.")
 
 		#Exit functionality	
 		elif cmd=='exit':
 			print'Client disconnected'
-			clientSock.send("DISCONN")
+			clientSock.send("DISC")
 			clientSock.close()
 			break
 

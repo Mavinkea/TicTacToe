@@ -107,19 +107,29 @@ def connect(clientSock):
 			if len(gameList)>0:
 				listOfGames=""
 				for g in gameList:
-					listOfGames+=str(g)
+					listOfGames+=str(g+"\n")
 				clientSock.send(listOfGames)
 			else:
 				clientSock.send("No games currently")
 
+		#List all players logged 
+		elif cmd=="who":
+			if len(players)>0:
+				listOfPlayers=""
+				for p in players:
+					listOfPlayers+=str(p.username+"\n")
+				clientSock.send(listOfPlayers)
+			else:
+				clientSock.send("No players currently")
+
 		#Help functionality
 		elif cmd=='help':
 			clientSock.send("Commands: "
-				+"\nlogin-create an account or log into an existing one"
-				+"\nplay-finds and starts a game, or waits until a game is found"
-				+"\nplace n-move to position n, where n is between 0 and 8"
-				+"\ngames-show all games currently going on"
-				+"\nexit-leave the server")
+				+"\nlogin username-Enter login followed by a username of your choice."
+				+"\nplay-Finds and starts a game, or waits until a game is found. Must be logged in to play"
+				+"\nplace n-Move to position n, where n is between 0 and 8. Must be logged in and in a game to use this command."
+				+"\ngames-Show all games currently going on."
+				+"\nexit-Leave the server.")
 
 		#Exit functionality	
 		elif cmd=='exit':

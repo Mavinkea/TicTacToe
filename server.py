@@ -84,10 +84,6 @@ def connect(clientSock):
 				+"\nplace n-move to position n, where n is between 1 and 9"
 				+"\nexit-leave the server")
 
-		elif cmd=='place':
-			game=TTTGame(1,2,3)
-			clientSock.send(game.drawBoard())
-
 		#Exit functionality	
 		elif cmd=='exit':
 			print'Client disconnected'
@@ -111,6 +107,7 @@ def startGame(game):
 
 			if response=="301 NPT":
 				game.turn.send("WAIT"+game.drawBoard())
+				game.waiting.send("WAIT"+game.drawBoard())
 				game.changeTurn()
 
 			elif response=="300 FIN":
@@ -119,7 +116,7 @@ def startGame(game):
 				game.waiting.send("Game over. "+game.turn.username+" won!")
 				print "Game over"
 		else:
-			game.turn.send("Invalid move")
+			continue
 
 	return
 

@@ -107,7 +107,8 @@ def connect(clientSock):
 			if len(gameList)>0:
 				listOfGames=""
 				for g in gameList:
-					listOfGames+=str(g+"\n")
+					listOfGames+=str(g)
+					listOfGames+="\n"
 				clientSock.send(listOfGames)
 			else:
 				clientSock.send("No games currently")

@@ -1,4 +1,6 @@
 # TicTacToe
+# Authors: Aril Mavinkere, Po Yiu Ho, Bonnie Consiglio
+# Group Number 23
 
 ## How To Run/System Documentation
 

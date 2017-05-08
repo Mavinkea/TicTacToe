@@ -93,3 +93,30 @@ Once a client is running, the following commands are available to you.
   * lists all players currently logged in
 
 
+## Test Documentation
+
+##### Welcome message when one user connects to the server
+![img3](https://github.com/Mavinkea/TicTacToe/blob/master/images/img3.JPG)
+
+
+##### Initial tests of "who" and "games" commands when only one client is connected to the server, but has not logged in yet
+![img4](https://github.com/Mavinkea/TicTacToe/blob/master/images/img4.JPG)
+
+
+##### Logging in and testing the "who" command again. This time it returns my username, since I am the only one logged into the server at this time.
+![img5](https://github.com/Mavinkea/TicTacToe/blob/master/images/img5.JPG)
+
+
+##### Under a second client (right side of the image), I connect to the server and login under the username "joe". After running the "who" command now, both aril and joe show up.
+![img6](https://github.com/Mavinkea/TicTacToe/blob/master/images/img6.JPG)
+
+
+##### Both players initiate a play request, but aril initiates first and joe initiates second. A game is started and aril is allowed to enter a move.
+![img7](https://github.com/Mavinkea/TicTacToe/blob/master/images/img7.JPG)
+
+
+##### Both players make moves using the place command. After each place command, both players are given an updated version of the board and the player that was previously waiting is allowed to enter a command. Player 1 (on the left) places X's on 0, 3, and 6 and wins the game. 
+![img8](https://github.com/Mavinkea/TicTacToe/blob/master/images/img8.JPG)
+
+##### Example of the "games" command with a game underway. The top two command prompts show two users (aril and joe) currently in game. On the bottom left, the server is running and printing information. Once aril and joe enter a game, the server generates a Game ID for that game and prints it on the server side. On the bottom right, a client connects to the server during the game. This client asks to see which games are currently underway with the "games" command, and is returned the same Game ID that 
+![img9](https://github.com/Mavinkea/TicTacToe/blob/master/images/img9.JPG)
